@@ -6,23 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body{
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:#f3f4f6;
-      color:#111827;
+      font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:#000;
+      color:#f9fafb;
       padding:20px 12px 40px;
     }
     h1{
       text-align:center;
       margin-bottom:18px;
+      font-size:24px;
+      letter-spacing:1px;
     }
     .box{
-      max-width:900px;
+      max-width:980px;
       margin:0 auto 18px;
-      background:#ffffff;
-      border-radius:10px;
-      border:1px solid #e5e7eb;
+      background:#050505;
+      border-radius:16px;
+      border:1px solid #1f2937;
       padding:14px 16px 16px;
       box-sizing:border-box;
+      box-shadow:0 0 18px rgba(15,23,42,0.6);
     }
     .box h2{
       margin:0 0 10px;
@@ -35,50 +38,53 @@
       align-items:flex-end;
     }
     .field{
-      flex:1 1 120px;
-      min-width:120px;
+      flex:1 1 140px;
+      min-width:140px;
     }
     label{
       display:block;
-      font-size:13px;
+      font-size:12px;
       margin-bottom:3px;
-      color:#4b5563;
+      color:#9ca3af;
     }
     input[type="text"],
     input[type="number"]{
       width:100%;
       box-sizing:border-box;
-      padding:6px 8px;
-      border-radius:6px;
-      border:1px solid #d1d5db;
-      font-size:14px;
+      padding:7px 9px;
+      border-radius:10px;
+      border:1px solid #1f2937;
+      background:#020617;
+      color:#e5e7eb;
+      font-size:13px;
     }
-    input[type="number"]{
-      text-align:right;
-    }
+    input[type="number"]{ text-align:right; }
+    input::placeholder{ color:#6b7280; }
     input:focus{
       outline:none;
-      border-color:#2563eb;
-      box-shadow:0 0 0 1px #bfdbfe;
+      border-color:#22c55e;
+      box-shadow:0 0 0 1px rgba(34,197,94,0.4);
     }
     .btn{
       display:inline-block;
       padding:7px 14px;
-      border-radius:6px;
-      border:none;
+      border-radius:999px;
+      border:1px solid #22c55e;
       cursor:pointer;
-      font-size:14px;
-      background:#2563eb;
-      color:white;
+      font-size:13px;
+      background:#022c22;
+      color:#bbf7d0;
       margin-top:2px;
     }
     .btn.secondary{
-      background:#e5e7eb;
-      color:#111827;
+      border-color:#4b5563;
+      background:#111827;
+      color:#e5e7eb;
     }
     .btn.danger{
-      background:#dc2626;
-      color:#fff;
+      border-color:#b91c1c;
+      background:#450a0a;
+      color:#fecaca;
     }
     .btn-row{
       margin-top:8px;
@@ -87,41 +93,52 @@
       gap:8px;
     }
     .info{
-      font-size:12px;
-      color:#6b7280;
+      font-size:11px;
+      color:#9ca3af;
       margin-top:6px;
+      line-height:1.4;
     }
     .totals{
       display:flex;
       flex-wrap:wrap;
-      gap:12px;
-      font-size:14px;
-      margin-top:8px;
+      gap:10px;
+      font-size:13px;
+      margin-top:10px;
     }
     .totals div{
       padding:6px 10px;
-      border-radius:6px;
-      background:#f9fafb;
-      border:1px solid #e5e7eb;
+      border-radius:999px;
+      background:#020617;
+      border:1px solid #111827;
+      white-space:nowrap;
     }
-    .pos{color:#16a34a;font-weight:600;}
-    .neg{color:#dc2626;font-weight:600;}
+    .pos{color:#22c55e;font-weight:600;}
+    .neg{color:#ef4444;font-weight:600;}
 
+    .table-wrapper{
+      margin-top:8px;
+      border-radius:14px;
+      border:1px solid #1f2937;
+      overflow-x:auto;
+    }
     table{
       width:100%;
       border-collapse:collapse;
-      font-size:14px;
-      margin-top:6px;
+      font-size:13px;
+      min-width:600px;
     }
     th, td{
-      border:1px solid #e5e7eb;
-      padding:6px 8px;
+      padding:7px 8px;
+      border-bottom:1px solid #111827;
+    }
+    thead{
+      background:#020617;
     }
     th{
-      background:#f9fafb;
       text-align:left;
-      font-size:12px;
-      color:#4b5563;
+      font-size:11px;
+      text-transform:uppercase;
+      color:#9ca3af;
     }
     td.amount{
       text-align:right;
@@ -132,15 +149,17 @@
     }
     .small-btn{
       padding:3px 7px;
-      font-size:12px;
-      border-radius:4px;
-      border:none;
+      font-size:11px;
+      border-radius:999px;
+      border:1px solid #4b5563;
       cursor:pointer;
-      background:#e5e7eb;
+      background:#020617;
+      color:#e5e7eb;
+      margin-left:4px;
     }
     .small-btn.danger{
-      background:#fecaca;
-      color:#7f1d1d;
+      border-color:#b91c1c;
+      color:#fecaca;
     }
   </style>
 </head>
@@ -148,7 +167,7 @@
 
 <h1>Fixkosten Übersicht</h1>
 
-<!-- OBEN: BUDGET / RESTGELD -->
+<!-- BUDGET / RESTGELD -->
 <div class="box">
   <h2>Monatsübersicht</h2>
   <div class="row">
@@ -158,46 +177,34 @@
     </div>
   </div>
   <div class="totals">
-    <div>
-      Gesamte Fixkosten: <span id="sum-total">0,00 €</span>
-    </div>
-    <div>
-      Davon schon gebucht (abgehakt): <span id="sum-paid">0,00 €</span>
-    </div>
-    <div>
-      Noch offen (nicht abgehakt): <span id="sum-open">0,00 €</span>
-    </div>
-    <div>
-      Rest nach allen Fixkosten (Budget – Gesamt):
-      <span id="rest-after-all" class="pos">0,00 €</span>
-    </div>
-    <div>
-      Rest nach offenen Fixkosten (Budget – offen):
-      <span id="rest-after-open" class="pos">0,00 €</span>
-    </div>
+    <div>Gesamte Fixkosten: <span id="sum-total">0,00 €</span></div>
+    <div>Schon gebucht: <span id="sum-paid">0,00 €</span></div>
+    <div>Noch offen: <span id="sum-open">0,00 €</span></div>
+    <div>Rest nach allen Fixkosten: <span id="rest-after-all" class="pos">0,00 €</span></div>
+    <div>Rest nach offenen Fixkosten: <span id="rest-after-open" class="pos">0,00 €</span></div>
   </div>
   <div class="info">
-    – Budget = das Geld, das dir für den Monat zur Verfügung steht.<br>
-    – „Gebucht?“ abhaken, wenn die Fixkosten schon vom Konto abgegangen sind.<br>
+    – Budget = Geld, das dir für den Monat zur Verfügung steht.<br>
+    – „Gebucht?“ anhaken, wenn die Zahlung schon vom Konto abgebucht ist.<br>
     – Für den nächsten Monat kannst du alle Haken mit einem Klick zurücksetzen.
   </div>
 </div>
 
-<!-- FIXKOSTEN LISTE -->
+<!-- FIXKOSTEN-LISTE -->
 <div class="box">
   <h2>Fixkosten-Liste</h2>
 
-  <!-- Neue Position hinzufügen -->
+  <!-- neue Position -->
   <div class="row" style="margin-bottom:10px;">
-    <div class="field" style="flex:2 1 150px;">
+    <div class="field" style="flex:2 1 160px;">
       <label for="inp-name">Bezeichnung</label>
-      <input type="text" id="inp-name" placeholder="z.B. Miete, Strom, Versicherung …">
+      <input type="text" id="inp-name" placeholder="z.B. eprimo GmbH, Commerzbank Kredit 1 …">
     </div>
     <div class="field">
       <label for="inp-amount">Betrag pro Monat (€)</label>
       <input type="number" id="inp-amount" min="0" step="0.01" placeholder="0,00">
     </div>
-    <div class="field" style="flex:0 0 120px;">
+    <div class="field" style="flex:0 0 130px;">
       <label>&nbsp;</label>
       <button class="btn" id="btn-add">Hinzufügen</button>
     </div>
@@ -209,55 +216,75 @@
   </div>
 
   <div class="info">
-    – Startwerte werden einmalig aus deinen Oktober-Buchungen (data.js) gebaut,<br>
-    &nbsp;&nbsp;&nbsp;und zwar aus den Kategorien, die du als Fixkosten verwendet hast.<br>
-    – Danach wird alles im Browser (localStorage) gespeichert.
+    Diese Startliste ist aus deinem Oktober gezogen (alle Fixkosten: Versicherungen, Kredite,
+    Kinderbetreuung, Sparen, Gebühren, Strom, Amazon&nbsp;Prime usw.).<br>
+    Danach läuft alles nur noch über den Browser-Speicher (localStorage).
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th style="width:45%;">Bezeichnung</th>
-        <th style="width:20%;">Betrag (€)</th>
-        <th style="width:15%;">Gebucht?</th>
-        <th style="width:20%;">Aktion</th>
-      </tr>
-    </thead>
-    <tbody id="tbody-fix"></tbody>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:45%;">Bezeichnung</th>
+          <th style="width:20%;">Betrag (€)</th>
+          <th style="width:15%;">Gebucht?</th>
+          <th style="width:20%;">Aktion</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-fix"></tbody>
+    </table>
+  </div>
 </div>
 
-<!-- deine Buchungen (Oktober) -->
-<script src="data.js"></script>
-
 <script>
-  const STORAGE_KEY_ITEMS  = "fixkosten_items_v1";
+  // --- feste Start-Fixkosten (aus deinem Oktober-Code) ---
+  const INITIAL_ITEMS = [
+    { id: 1,  name: "Verkehrsgesellschaft Velbert",        amount: 14.0,   paid: false },
+    { id: 2,  name: "TARGOBANK AG Rate",                   amount: 101.2,  paid: false },
+    { id: 3,  name: "Stadt Velbert OGS",                   amount: 190.0,  paid: false },
+    { id: 4,  name: "Union Krankenversicherung",           amount: 17.16,  paid: false },
+    { id: 5,  name: "Baloise Versicherung",                amount: 19.92,  paid: false },
+    { id: 6,  name: "Finion Capital GmbH",                 amount: 29.0,   paid: false },
+    { id: 7,  name: "Continentale / Europa Verbund",       amount: 8.08,   paid: false },
+    { id: 8,  name: "Provinzial Sachversicherung",         amount: 104.73, paid: false },
+    { id: 9,  name: "Provinzial Lebensversicherung",       amount: 22.0,   paid: false },
+    { id:10,  name: "DKV Krankenversicherung",             amount: 26.49,  paid: false },
+    { id:11,  name: "Core MSCI World USD (Acc)",           amount: 60.0,   paid: false },
+    { id:12,  name: "NVIDIA Saveback",                     amount: 15.0,   paid: false },
+    { id:13,  name: "NVIDIA Sparplan",                     amount: 30.0,   paid: false },
+    { id:14,  name: "Kolping-Kita Farbenspiel",            amount: 58.0,   paid: false },
+    { id:15,  name: "Apple",                               amount: 22.99,  paid: false },
+    { id:16,  name: "SPK Hilden Ratingen Velbert Mastercard", amount: 64.41, paid: false },
+    { id:17,  name: "interaktiv gGmbH",                    amount: 76.3,   paid: false },
+    { id:18,  name: "eprimo GmbH",                         amount: 150.0,  paid: false },
+    { id:19,  name: "eprimo GmbH",                         amount: 150.0,  paid: false },
+    { id:20,  name: "NVIDIA Round up",                     amount: 7.23,   paid: false },
+    { id:21,  name: "PuM Sparkasse Velbert",               amount: 1.5,    paid: false },
+    { id:22,  name: "Zurich Insurance",                    amount: 42.59,  paid: false },
+    { id:23,  name: "Stadt Velbert",                       amount: 38.0,   paid: false },
+    { id:24,  name: "E-Plus Service GmbH",                 amount: 8.99,   paid: false },
+    { id:25,  name: "NVIDIA Round up",                     amount: 6.96,   paid: false },
+    { id:26,  name: "Schulverein des GSG",                 amount: 1.0,    paid: false },
+    { id:27,  name: "Landeshauptkasse NRW",                amount: 50.0,   paid: false },
+    { id:28,  name: "PuM Sparkasse Velbert",               amount: 3.0,    paid: false },
+    { id:29,  name: "Vodafone West GmbH",                  amount: 49.97,  paid: false },
+    { id:30,  name: "Telefonica Germany GmbH",             amount: 14.99,  paid: false },
+    { id:31,  name: "Apple",                               amount: 5.99,   paid: false },
+    { id:32,  name: "NVIDIA Round up",                     amount: 9.57,   paid: false },
+    { id:33,  name: "Stadtwerke Velbert",                  amount: 40.0,   paid: false },
+    { id:34,  name: "Amazon Prime",                        amount: 8.99,   paid: false },
+    { id:35,  name: "Commerzbank AG Kredit 2",             amount: 383.52, paid: false },
+    { id:36,  name: "Commerzbank AG Kredit 1",             amount: 486.25, paid: false },
+    { id:37,  name: "Trade Republic Sparen",               amount: 90.0,   paid: false },
+    { id:38,  name: "DITIB Beitrag allgemein",             amount: 10.0,   paid: false },
+    { id:39,  name: "DITIB Beitrag k, i",                  amount: 15.0,   paid: false },
+    { id:40,  name: "ENTGELTABSCHLUSS",                    amount: 11.45,  paid: false },
+    { id:41,  name: "ENTGELTABSCHLUSS",                    amount: 7.0,    paid: false },
+    { id:42,  name: "Apple",                               amount: 27.0,   paid: false }
+  ];
+
+  const STORAGE_KEY_ITEMS  = "fixkosten_items_v3";
   const STORAGE_KEY_BUDGET = "fixkosten_budget_v1";
-
-  /**
-   * Struktur eines Eintrags:
-   * { id: number, name: string, amount: number, paid: boolean }
-   */
-
-  // Kategorien, die du vorher als Fixkosten-Filter genutzt hast
-  const FIX_KATEGORIEN = new Set([
-    "Abgaben / Gebühren",
-    "Abos / Streaming",
-    "Einnahmen / Familie",
-    "Einnahmen / Gehalt",
-    "Energie / Wasser / Strom",
-    "Fitness / Freizeit",
-    "Gebühren / Bankkosten",
-    "Kinderbetreuung",
-    "Kredit / Finanzierung",
-    "Kreditkarte / Gebühren",
-    "Mobilfunk / Internet / TV",
-    "ÖPNV / Mobilität",
-    "Sonstiges / Online",
-    "Sparen / Fonds",
-    "Spenden / Mitgliedsbeiträge",
-    "Versicherung"
-  ]);
 
   function euro(v){
     return v.toLocaleString("de-DE", {
@@ -266,8 +293,8 @@
     }) + " €";
   }
 
+  // ---- Daten laden / speichern ----
   function loadItems(){
-    // 1) schauen, ob schon etwas im localStorage liegt
     try{
       const raw = localStorage.getItem(STORAGE_KEY_ITEMS);
       if(raw){
@@ -275,30 +302,8 @@
         if(Array.isArray(arr)) return arr;
       }
     }catch(e){}
-
-    // 2) wenn NICHTS im Storage: aus deinen Buchungen (Oktober) Fixkosten bauen
-    if(Array.isArray(window.buchungenInitial)){
-      const sums = new Map(); // Kategorie -> Summe
-      window.buchungenInitial.forEach(b => {
-        if(b.type !== "aus") return;             // nur Ausgaben
-        if(!FIX_KATEGORIEN.has(b.kategorie)) return; // nur Fix-Kategorien
-        const v = Number(b.amount) || 0;
-        sums.set(b.kategorie, (sums.get(b.kategorie) || 0) + v);
-      });
-
-      let id = 1;
-      const itemsFromData = Array.from(sums.entries()).map(([kat, sum]) => ({
-        id: id++,
-        name: kat,
-        amount: sum,
-        paid: false
-      }));
-
-      return itemsFromData;
-    }
-
-    // Fallback: leer
-    return [];
+    // wenn noch nichts gespeichert: Kopie der Startliste
+    return INITIAL_ITEMS.map(it => ({...it}));
   }
 
   function saveItems(){
@@ -323,6 +328,7 @@
 
   let items = loadItems();
 
+  // ---- Rendering ----
   function render(){
     const tbody = document.getElementById("tbody-fix");
     tbody.innerHTML = "";
@@ -354,17 +360,43 @@
       const tdActions = document.createElement("td");
       tdActions.className = "center";
 
+      // Bearbeiten
+      const btnEdit = document.createElement("button");
+      btnEdit.textContent = "Bearb.";
+      btnEdit.className = "small-btn";
+      btnEdit.addEventListener("click", () => {
+        const newName = prompt("Neue Bezeichnung:", item.name);
+        if(newName === null) return;
+        const trimmed = newName.trim();
+        if(!trimmed){
+          alert("Bezeichnung darf nicht leer sein.");
+          return;
+        }
+        const newAmountStr = prompt("Neuer Betrag in €:", String(item.amount).replace(".", ","));
+        if(newAmountStr === null) return;
+        const valNum = parseFloat(String(newAmountStr).replace(",", "."));
+        if(!isFinite(valNum) || valNum <= 0){
+          alert("Ungültiger Betrag.");
+          return;
+        }
+        item.name = trimmed;
+        item.amount = valNum;
+        saveItems();
+        render();
+      });
+
+      // Löschen (ein einzelner Eintrag, z.B. Kredit fertig)
       const btnDel = document.createElement("button");
       btnDel.textContent = "Löschen";
       btnDel.className = "small-btn danger";
       btnDel.addEventListener("click", () => {
-        if(confirm("Diesen Eintrag wirklich löschen?")){
-          items = items.filter(x => x.id !== item.id);
-          saveItems();
-          render();
-        }
+        if(!confirm("Diesen Eintrag wirklich löschen?")) return;
+        items = items.filter(x => x.id !== item.id);
+        saveItems();
+        render();
       });
 
+      tdActions.appendChild(btnEdit);
       tdActions.appendChild(btnDel);
 
       tr.appendChild(tdName);
@@ -412,7 +444,7 @@
     elOpen.classList.toggle("pos", restOpen >= 0);
   }
 
-  // Neues Item hinzufügen
+  // ---- neue Position hinzufügen ----
   document.getElementById("btn-add").addEventListener("click", () => {
     const nameEl   = document.getElementById("inp-name");
     const amountEl = document.getElementById("inp-amount");
@@ -445,7 +477,7 @@
     render();
   });
 
-  // Budget-Input Verhalten
+  // ---- Budget-Input ----
   const budgetEl = document.getElementById("inp-budget");
   const loadedBudget = loadBudget();
   if(loadedBudget !== ""){
@@ -458,21 +490,18 @@
     updateTotals();
   });
 
-  // Button: Abhaken zurücksetzen (neuer Monat)
+  // ---- Buttons oben ----
+  // Abhaken zurücksetzen (neuer Monat)
   document.getElementById("btn-reset-paid").addEventListener("click", () => {
-    if(!confirm("Alle Haken (Gebucht?) für einen neuen Monat zurücksetzen?")){
-      return;
-    }
+    if(!confirm("Alle Haken (Gebucht?) für einen neuen Monat zurücksetzen?")) return;
     items.forEach(item => { item.paid = false; });
     saveItems();
     render();
   });
 
-  // Button: Alle Einträge löschen
+  // Alle Einträge löschen
   document.getElementById("btn-delete-all").addEventListener("click", () => {
-    if(!confirm("Wirklich ALLE Fixkosten-Einträge löschen?")){
-      return;
-    }
+    if(!confirm("Wirklich ALLE Fixkosten-Einträge löschen?")) return;
     items = [];
     saveItems();
     render();
