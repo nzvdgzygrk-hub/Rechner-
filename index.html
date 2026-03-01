@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Fixkosten Übersicht</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:#f3f4f6;
+      color:#111827;
+      padding:20px 12px 40px;
+    }
+    h1{
+      text-align:center;
+      margin-bottom:18px;
+    }
+    .box{
+      max-width:900px;
+      margin:0 auto 18px;
+      background:#ffffff;
+      border-radius:10px;
+      border:1px solid #e5e7eb;
+      padding:14px 16px 16px;
+      box-sizing:border-box;
+    }
+    .box h2{
+      margin:0 0 10px;
+      font-size:18px;
+    }
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:flex-end;
+    }
+    .field{
+      flex:1 1 120px;
+      min-width:120px;
+    }
+    label{
+      display:block;
+      font-size:13px;
+      margin-bottom:3px;
+      color:#4b5563;
+    }
+    input[type="text"],
+    input[type="number"]{
+      width:100%;
+      box-sizing:border-box;
+      padding:6px 8px;
+      border-radius:6px;
+      border:1px solid #d1d5db;
+      font-size:14px;
+    }
+    input[type="number"]{
+      text-align:right;
+    }
+    input:focus{
+      outline:none;
+      border-color:#2563eb;
+      box-shadow:0 0 0 1px #bfdbfe;
+    }
+    .btn{
+      display:inline-block;
+      padding:7px 14px;
+      border-radius:6px;
+      border:none;
+      cursor:pointer;
+      font-size:14px;
+      background:#2563eb;
+      color:white;
+      margin-top:2px;
+    }
+    .btn.secondary{
+      background:#e5e7eb;
+      color:#111827;
+    }
+    .btn.danger{
+      background:#dc2626;
+      color:#fff;
+    }
+    .btn-row{
+      margin-top:8px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .info{
+      font-size:12px;
+      color:#6b7280;
+      margin-top:6px;
+    }
+    .totals{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      font-size:14px;
+      margin-top:8px;
+    }
+    .totals div{
+      padding:6px 10px;
+      border-radius:6px;
+      background:#f9fafb;
+      border:1px solid #e5e7eb;
+    }
+    .pos{color:#16a34a;font-weight:600;}
+    .neg{color:#dc2626;font-weight:600;}
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+      margin-top:6px;
+    }
+    th, td{
+      border:1px solid #e5e7eb;
+      padding:6px 8px;
+    }
+    th{
+      background:#f9fafb;
+      text-align:left;
+      font-size:12px;
+      color:#4b5563;
+    }
+    td.amount{
+      text-align:right;
+      white-space:nowrap;
+    }
+    td.center{
+      text-align:center;
+    }
+    .small-btn{
+      padding:3px 7px;
+      font-size:12px;
+      border-radius:4px;
+      border:none;
+      cursor:pointer;
+      background:#e5e7eb;
+    }
+    .small-btn.danger{
+      background:#fecaca;
+      color:#7f1d1d;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Fixkosten Übersicht</h1>
+
+<!-- OBEN: BUDGET / RESTGELD -->
+<div class="box">
+  <h2>Monatsübersicht</h2>
+  <div class="row">
+    <div class="field">
+      <label for="inp-budget">Verfügbares Geld für diesen Monat (€)</label>
+      <input type="number" id="inp-budget" min="0" step="0.01" placeholder="z.B. 1500">
+    </div>
+  </div>
+  <div class="totals">
+    <div>
+      Gesamte Fixkosten: <span id="sum-total">0,00 €</span>
+    </div>
+    <div>
+      Davon schon gebucht (abgehakt): <span id="sum-paid">0,00 €</span>
+    </div>
+    <div>
+      Noch offen (nicht abgehakt): <span id="sum-open">0,00 €</span>
+    </div>
+    <div>
+      Rest nach allen Fixkosten (Budget – Gesamt):
+      <span id="rest-after-all" class="pos">0,00 €</span>
+    </div>
+    <div>
+      Rest nach offenen Fixkosten (Budget – offen):
+      <span id="rest-after-open" class="pos">0,00 €</span>
+    </div>
+  </div>
+  <div class="info">
+    – Budget = das Geld, das dir für den Monat zur Verfügung steht.<br>
+    – „Gebucht?“ abhaken, wenn die Fixkosten schon vom Konto abgegangen sind.<br>
+    – Für den nächsten Monat kannst du alle Haken mit einem Klick zurücksetzen.
+  </div>
+</div>
+
+<!-- FIXKOSTEN LISTE -->
+<div class="box">
+  <h2>Fixkosten-Liste</h2>
+
+  <!-- Neue Position hinzufügen -->
+  <div class="row" style="margin-bottom:10px;">
+    <div class="field" style="flex:2 1 150px;">
+      <label for="inp-name">Bezeichnung</label>
+      <input type="text" id="inp-name" placeholder="z.B. Miete, Strom, Versicherung …">
+    </div>
+    <div class="field">
+      <label for="inp-amount">Betrag pro Monat (€)</label>
+      <input type="number" id="inp-amount" min="0" step="0.01" placeholder="0,00">
+    </div>
+    <div class="field" style="flex:0 0 120px;">
+      <label>&nbsp;</label>
+      <button class="btn" id="btn-add">Hinzufügen</button>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn secondary" id="btn-reset-paid">Abhaken zurücksetzen (neuer Monat)</button>
+    <button class="btn danger" id="btn-delete-all">Alle Einträge löschen</button>
+  </div>
+
+  <div class="info">
+    – Startwerte werden einmalig aus deinen Oktober-Buchungen (data.js) gebaut,<br>
+    &nbsp;&nbsp;&nbsp;und zwar aus den Kategorien, die du als Fixkosten verwendet hast.<br>
+    – Danach wird alles im Browser (localStorage) gespeichert.
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:45%;">Bezeichnung</th>
+        <th style="width:20%;">Betrag (€)</th>
+        <th style="width:15%;">Gebucht?</th>
+        <th style="width:20%;">Aktion</th>
+      </tr>
+    </thead>
+    <tbody id="tbody-fix"></tbody>
+  </table>
+</div>
+
+<!-- deine Buchungen (Oktober) -->
+<script src="data.js"></script>
+
+<script>
+  const STORAGE_KEY_ITEMS  = "fixkosten_items_v1";
+  const STORAGE_KEY_BUDGET = "fixkosten_budget_v1";
+
+  /**
+   * Struktur eines Eintrags:
+   * { id: number, name: string, amount: number, paid: boolean }
+   */
+
+  // Kategorien, die du vorher als Fixkosten-Filter genutzt hast
+  const FIX_KATEGORIEN = new Set([
+    "Abgaben / Gebühren",
+    "Abos / Streaming",
+    "Einnahmen / Familie",
+    "Einnahmen / Gehalt",
+    "Energie / Wasser / Strom",
+    "Fitness / Freizeit",
+    "Gebühren / Bankkosten",
+    "Kinderbetreuung",
+    "Kredit / Finanzierung",
+    "Kreditkarte / Gebühren",
+    "Mobilfunk / Internet / TV",
+    "ÖPNV / Mobilität",
+    "Sonstiges / Online",
+    "Sparen / Fonds",
+    "Spenden / Mitgliedsbeiträge",
+    "Versicherung"
+  ]);
+
+  function euro(v){
+    return v.toLocaleString("de-DE", {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }) + " €";
+  }
+
+  function loadItems(){
+    // 1) schauen, ob schon etwas im localStorage liegt
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY_ITEMS);
+      if(raw){
+        const arr = JSON.parse(raw);
+        if(Array.isArray(arr)) return arr;
+      }
+    }catch(e){}
+
+    // 2) wenn NICHTS im Storage: aus deinen Buchungen (Oktober) Fixkosten bauen
+    if(Array.isArray(window.buchungenInitial)){
+      const sums = new Map(); // Kategorie -> Summe
+      window.buchungenInitial.forEach(b => {
+        if(b.type !== "aus") return;             // nur Ausgaben
+        if(!FIX_KATEGORIEN.has(b.kategorie)) return; // nur Fix-Kategorien
+        const v = Number(b.amount) || 0;
+        sums.set(b.kategorie, (sums.get(b.kategorie) || 0) + v);
+      });
+
+      let id = 1;
+      const itemsFromData = Array.from(sums.entries()).map(([kat, sum]) => ({
+        id: id++,
+        name: kat,
+        amount: sum,
+        paid: false
+      }));
+
+      return itemsFromData;
+    }
+
+    // Fallback: leer
+    return [];
+  }
+
+  function saveItems(){
+    localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(items));
+  }
+
+  function loadBudget(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY_BUDGET);
+      if(raw === null) return "";
+      const v = parseFloat(raw);
+      if(!isFinite(v)) return "";
+      return v;
+    }catch(e){
+      return "";
+    }
+  }
+
+  function saveBudget(v){
+    localStorage.setItem(STORAGE_KEY_BUDGET, String(v));
+  }
+
+  let items = loadItems();
+
+  function render(){
+    const tbody = document.getElementById("tbody-fix");
+    tbody.innerHTML = "";
+
+    items.forEach(item => {
+      const val = Number(item.amount) || 0;
+
+      const tr = document.createElement("tr");
+
+      const tdName = document.createElement("td");
+      tdName.textContent = item.name;
+
+      const tdAmount = document.createElement("td");
+      tdAmount.className = "amount";
+      tdAmount.textContent = euro(val);
+
+      const tdPaid = document.createElement("td");
+      tdPaid.className = "center";
+      const chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.checked = !!item.paid;
+      chk.addEventListener("change", () => {
+        item.paid = chk.checked;
+        saveItems();
+        updateTotals();
+      });
+      tdPaid.appendChild(chk);
+
+      const tdActions = document.createElement("td");
+      tdActions.className = "center";
+
+      const btnDel = document.createElement("button");
+      btnDel.textContent = "Löschen";
+      btnDel.className = "small-btn danger";
+      btnDel.addEventListener("click", () => {
+        if(confirm("Diesen Eintrag wirklich löschen?")){
+          items = items.filter(x => x.id !== item.id);
+          saveItems();
+          render();
+        }
+      });
+
+      tdActions.appendChild(btnDel);
+
+      tr.appendChild(tdName);
+      tr.appendChild(tdAmount);
+      tr.appendChild(tdPaid);
+      tr.appendChild(tdActions);
+
+      tbody.appendChild(tr);
+    });
+
+    updateTotals();
+  }
+
+  function updateTotals(){
+    let sumTotal = 0;
+    let sumPaid  = 0;
+    items.forEach(item => {
+      const v = Number(item.amount) || 0;
+      sumTotal += v;
+      if(item.paid) sumPaid += v;
+    });
+    const sumOpen = sumTotal - sumPaid;
+
+    document.getElementById("sum-total").textContent = euro(sumTotal);
+    document.getElementById("sum-paid").textContent  = euro(sumPaid);
+    document.getElementById("sum-open").textContent  = euro(sumOpen);
+
+    const budgetInput = document.getElementById("inp-budget").value.trim();
+    let budget = parseFloat(budgetInput.replace(",", "."));
+    if(!isFinite(budget)) budget = 0;
+
+    const restAll  = budget - sumTotal;
+    const restOpen = budget - sumOpen;
+
+    const elAll  = document.getElementById("rest-after-all");
+    const elOpen = document.getElementById("rest-after-open");
+
+    elAll.textContent  = euro(restAll);
+    elOpen.textContent = euro(restOpen);
+
+    elAll.classList.toggle("neg", restAll < 0);
+    elAll.classList.toggle("pos", restAll >= 0);
+
+    elOpen.classList.toggle("neg", restOpen < 0);
+    elOpen.classList.toggle("pos", restOpen >= 0);
+  }
+
+  // Neues Item hinzufügen
+  document.getElementById("btn-add").addEventListener("click", () => {
+    const nameEl   = document.getElementById("inp-name");
+    const amountEl = document.getElementById("inp-amount");
+
+    const name      = nameEl.value.trim();
+    const amountRaw = amountEl.value.trim();
+
+    if(!name || !amountRaw){
+      alert("Bitte Bezeichnung und Betrag ausfüllen.");
+      return;
+    }
+
+    const val = parseFloat(amountRaw.replace(",", "."));
+    if(!isFinite(val) || val <= 0){
+      alert("Ungültiger Betrag.");
+      return;
+    }
+
+    const maxId = items.reduce((m,it)=>Math.max(m, it.id || 0), 0);
+    items.push({
+      id: maxId + 1,
+      name: name,
+      amount: val,
+      paid: false
+    });
+
+    saveItems();
+    nameEl.value   = "";
+    amountEl.value = "";
+    render();
+  });
+
+  // Budget-Input Verhalten
+  const budgetEl = document.getElementById("inp-budget");
+  const loadedBudget = loadBudget();
+  if(loadedBudget !== ""){
+    budgetEl.value = loadedBudget;
+  }
+  budgetEl.addEventListener("input", () => {
+    let v = parseFloat(budgetEl.value.replace(",", "."));
+    if(!isFinite(v)) v = 0;
+    saveBudget(v);
+    updateTotals();
+  });
+
+  // Button: Abhaken zurücksetzen (neuer Monat)
+  document.getElementById("btn-reset-paid").addEventListener("click", () => {
+    if(!confirm("Alle Haken (Gebucht?) für einen neuen Monat zurücksetzen?")){
+      return;
+    }
+    items.forEach(item => { item.paid = false; });
+    saveItems();
+    render();
+  });
+
+  // Button: Alle Einträge löschen
+  document.getElementById("btn-delete-all").addEventListener("click", () => {
+    if(!confirm("Wirklich ALLE Fixkosten-Einträge löschen?")){
+      return;
+    }
+    items = [];
+    saveItems();
+    render();
+  });
+
+  // Start
+  render();
+</script>
+
+</body>
+</html>
