@@ -115,21 +115,26 @@
     .pos{color:#22c55e;font-weight:600;}
     .neg{color:#ef4444;font-weight:600;}
 
-    .table-wrapper{
-      margin-top:8px;
-      border-radius:14px;
-      border:1px solid #1f2937;
-      overflow-x:auto;
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      font-size:13px;
-      min-width:600px;
-    }
-    th, td{
-      padding:7px 8px;
-      border-bottom:1px solid #111827;
+  .table-wrapper{
+  margin-top:8px;
+  border-radius:14px;
+  border:1px solid #1f2937;
+  /* auf Handy kein Horizontalscroll nötig */
+  overflow-x:hidden;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+  table-layout:fixed;      /* Spalten teilen sich den Platz */
+}
+
+th, td{
+  padding:7px 8px;
+  border-bottom:1px solid #111827;
+  word-wrap:break-word;    /* lange Namen umbrechen */
+}
     }
     thead{
       background:#020617;
